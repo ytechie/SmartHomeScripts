@@ -11,11 +11,15 @@ definition(
 
 preferences {
 	section("Temperature Sensors") {
-        input "mainFloorTempSensor", "capability.temperatureMeasurement"
-        input "secondFloorTempSensor", "capability.temperatureMeasurement"
-        
-        input "furnaceFan", "capability.thermostat"        
+        input "mainFloorTempSensor", "capability.temperatureMeasurement", required: true
+        input "secondFloorTempSensor", "capability.temperatureMeasurement", required: true 
 	}
+    section("Thermostat") {
+    	input "furnaceFan", "capability.thermostat", required: true
+    }
+    section("Parameters") {
+    	input "targetDiff", "number", required: true, title: "Temperature Difference"
+    }
 }
 
 def installed() {
@@ -40,7 +44,10 @@ def tempChange(evt) {
   log.debug "Main floor temp: " + mainFloorTempSensor.latestValue("temperature")
   log.debug "Second floor temp: " + secondFloorTempSensor.latestValue("temperature")
   
-  if(secondFloorTempSensor.latestValue("temperature") + 4 > mainFloorTempSensor.latestValue("temperature")) {
+  def actualDiff = secondFloorTempSensor.latestValue("temperature") - mainFloorTempSensor.latestValue("temperature")
+  log.debug "Temp difference: " + Math.abs(actualDiff);
+  
+  if(actualDiff > targetDiff) {
   	furnaceFan.fanOn();
     log.debug "Turning furnace fan on to equalize temperature"
   } else {
