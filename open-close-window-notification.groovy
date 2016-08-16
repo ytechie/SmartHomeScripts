@@ -17,9 +17,11 @@ preferences {
     section("Parameters") {
     	input "targetTemp", "number", required: true, title: "Target Temperature"
     }
+    /*
     section("Send Notifications?") {
         input("recipients", "contact", title: "Send notifications to")
     }
+    */
 }
 
 def installed() {
