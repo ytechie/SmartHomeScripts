@@ -38,14 +38,17 @@ def updated() {
 def initialize() {
     subscribe(mainFloorTempSensor, "temperature", tempChange)
     subscribe(secondFloorTempSensor, "temperature", tempChange)
+    
+    tempChange(null)
 }
 
 def tempChange(evt) {
   log.debug "Main floor temp: " + mainFloorTempSensor.latestValue("temperature")
   log.debug "Second floor temp: " + secondFloorTempSensor.latestValue("temperature")
   
-  def actualDiff = secondFloorTempSensor.latestValue("temperature") - mainFloorTempSensor.latestValue("temperature")
-  log.debug "Temp difference: " + Math.abs(actualDiff);
+  def actualDiff = Math.abs(secondFloorTempSensor.latestValue("temperature") - mainFloorTempSensor.latestValue("temperature"))
+  log.debug "Temp difference: " + actualDiff;
+  log.debug "Max difference: " + targetDiff;
   
   if(actualDiff > targetDiff) {
   	furnaceFan.fanOn();
